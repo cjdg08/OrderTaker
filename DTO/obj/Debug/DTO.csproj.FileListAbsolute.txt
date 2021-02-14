@@ -1,0 +1,5 @@
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DTO\bin\Debug\DTO.dll
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DTO\bin\Debug\DTO.pdb
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DTO\obj\Debug\DTO.csprojResolveAssemblyReference.cache
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DTO\obj\Debug\DTO.dll
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DTO\obj\Debug\DTO.pdb

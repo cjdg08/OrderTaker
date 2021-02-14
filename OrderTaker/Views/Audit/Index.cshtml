@@ -1,0 +1,115 @@
+﻿@using ViewModel;
+@model List<AuditLogsVM>
+@{
+    ViewBag.Title = "Audit Logs";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">@ViewBag.Title</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="box-body">
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table id="tblAuditLogs" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th style="text-align: center">Transaction Date</th>
+                                            <th>Transayction Type</th>
+                                            <th>Description</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td>@item.UserID</td>
+                                                    <td style="text-align: center">@item.TransactionDate</td>
+                                                    <td>@item.TransactionType</td>
+                                                    <td>@item.Description</td>
+                                                    <td style="text-align: center"><button class="btn btn-success viewDetail" id="@item.ID" title="View Detail" onclick="return false;"><i class="fa fa-search-plus"></i></button></td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalDetail">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Audit Details</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-12 col-ms-12 col-md-12 col-lg-12">
+                                <table id="tblAuditDetail" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Details</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".viewDetail").click(function () {
+                $("#tblAuditDetail tbody").empty();
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetAuditDetail")',
+                    data: { AuditLogsID: this.id },
+                    dataType: 'JSON',
+                    success: function (data) {
+                        $.each(data, function (indx, value) {
+                            $("#tblAuditDetail tbody").append('<tr><td>' + value.Details + '<td></tr>');
+                        });
+                    }
+                });
+
+                $("#ModalDetail").modal({ backdrop: 'static', keyboard: false }, 'show');
+                return false;
+            });
+        });
+    </script>
+}

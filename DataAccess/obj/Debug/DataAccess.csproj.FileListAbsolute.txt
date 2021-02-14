@@ -1,0 +1,9 @@
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DataAccess\bin\Debug\DataAccess.dll
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DataAccess\bin\Debug\DataAccess.pdb
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DataAccess\bin\Debug\Dapper.dll
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DataAccess\bin\Debug\DTO.dll
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DataAccess\bin\Debug\DTO.pdb
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DataAccess\bin\Debug\Dapper.xml
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DataAccess\obj\Debug\DataAccess.csprojResolveAssemblyReference.cache
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DataAccess\obj\Debug\DataAccess.dll
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\DataAccess\obj\Debug\DataAccess.pdb

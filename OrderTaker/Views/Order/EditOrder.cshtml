@@ -1,0 +1,603 @@
+﻿@using ViewModel;
+@model PurchaseOrderVM
+@{
+    ViewBag.Title = "Order Taking";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">@ViewBag.Title</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="Customer" class="control-label required col-md-2">Customer</label>
+                                        <div class="col-md-10">
+                                            @Html.TextBoxFor(m => m.CustomerName, new { @id = "Customer", @class = "form-control", @maxlength = "60", @title = Model.CustomerName })
+                                            <div id="suggestion" class="col-md-12 suggestion">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="DeliveryDate" class="control-label required col-md-2">Delivery Date</label>
+                                        <div class="col-md-3">
+                                            @Html.EditorFor(x => x.DateOfDelivery, new { htmlAttributes = new { type = "date", @class = "form-control", @id = "DeliveryDate", @title = Model.DateOfDelivery } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="Status" class="control-label required col-md-2">Status</label>
+                                        <div class="col-md-3">
+                                            @{
+                                                List<SelectListItem> status = new List<SelectListItem>();
+                                                status.Add(new SelectListItem
+                                                {
+                                                    Text = "New",
+                                                    Value = "New",
+                                                    Selected = Model.Status == "New" ? true : false
+                                                });
+                                                status.Add(new SelectListItem
+                                                {
+                                                    Text = "Completed",
+                                                    Value = "Completed",
+                                                    Selected = Model.Status == "Completed" ? true : false
+                                                });
+                                                status.Add(new SelectListItem
+                                                {
+                                                    Text = "Cancelled",
+                                                    Value = "Cancelled",
+                                                    Selected = Model.Status == "Cancelled" ? true : false
+                                                });
+                                            }
+                                            @Html.DropDownListFor(x => x.Status, status, "- Select Gender -", new { @class = "form-control", @id = "Status", @title = Model.Status })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#AddItem" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i> Add Item</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3>Items</h3>
+                                    <div class="table-responsive">
+                                        <table id="tblItems" class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>SKU</th>
+                                                    <th style="text-align: center">Quantity</th>
+                                                    <th style="display: none">Unit Price</th>
+                                                    <th style="text-align: right">Price</th>
+                                                    <th></th>
+                                                    <th style="display: none">SKUID</th>
+                                                    <th style="display: none">PurchaseItemID</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{ 
+                                                    foreach(var item in Model.PurchaseItems)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.ItemName</td>
+                                                            <td style="text-align: center" title="@item.Quantity">@item.Quantity</td>
+                                                            <td style="display: none">@item.UnitPrice</td>
+                                                            <td style="text-align: right">@((item.UnitPrice * item.Quantity).ToString("N2"))</td>
+                                                            <td style="text-align: center"><button class='btn btn-success' title='Edit' onclick="return editItem('@item.SKUID','@item.UnitPrice','@item.Quantity');"><i class='fa fa-edit'></i></button></td>
+                                                            <td style="display: none" title="@item.SKUID">@item.SKUID</td>
+                                                            <td style="display: none">@item.ID</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="2"><b>Total Amount</b></td>
+                                                    <td style="text-align: right"><b><label id="lblTotal" class="control-label">@(Model.AmountDue.ToString("N2"))</label></b></td>
+                                                    <td></td>
+                                                    <td style="display: none"></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                    <button type="submit" onclick="return false;" id="Save" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="AddItem">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Item</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-12 col-ms-12 col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="ItemName" class="col-md-12 control-label required">Item Name</label>
+                                            <div class="col-md-12">
+                                                @Html.DropDownList("ItemName", (IEnumerable<SelectListItem>)ViewBag.ddlItem, new { @id = "ItemName", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="Quantity" class="col-md-12 control-label required">Quantity</label>
+                                            <div class="col-md-12">
+                                                <input type="hidden" id="UnitPrice" />
+                                                <input type="text" id="Quantity" class="form-control integer" maxlength="60" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="Add" class="btn btn-success"><i class="fa fa-save"></i> Add</button>
+                <button id="Cancel" class="btn btn-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i> Cancel</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="EditItem">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Item</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-12 col-ms-12 col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="EditItemName" class="col-md-12 control-label required">Item Name</label>
+                                            <div class="col-md-12">
+                                                <input type="hidden" id="EditingID" />
+                                                @Html.DropDownList("EditItemName", (IEnumerable<SelectListItem>)ViewBag.ddlItem, new { @id = "EditItemName", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="EditQuantity" class="col-md-12 control-label required">Quantity</label>
+                                            <div class="col-md-12">
+                                                <input type="hidden" id="EditUnitPrice" />
+                                                <input type="text" id="EditQuantity" class="form-control integer" maxlength="60" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="Update" class="btn btn-success"><i class="fa fa-save"></i> Update</button>
+                <button id="Cancel" class="btn btn-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i> Cancel</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            var typingTimer;                //timer identifier
+            var doneTypingInterval = 1500;  //time in ms (1.5 seconds)
+
+            $("#Customer").focusout(function () {
+                setTimeout(function () {
+                    $("#suggestion").empty();
+                    $("#suggestion").css("display", "none");
+                }, 500);
+            });
+
+            $("#Customer").keyup(function () {
+                clearTimeout(typingTimer);
+                if ($("#Customer").val().length >= 3) {
+                    if ($("#suggestion").find("#Loading").length <= 0) {
+                        $("#suggestion").append('<i id="Loading" class="fa fa-spinner fa-pulse fa-fw"></i>');
+                        $("#suggestion").css("display", "block");
+                    }
+                    typingTimer = setTimeout(populateSuggestion, doneTypingInterval);
+                }
+            });
+
+            $("#Customer").keypress(function (evt) {
+                evt = (evt) ? evt : window.event;
+                var charCode = (evt.which) ? evt.which : evt.keyCode;
+                if (charCode == 13) {
+                    if ($(".optSelected").length >= 1) {
+                        $(".optSelected").click();
+                    }
+                    $("#DeliveryDate").focus();
+                    return false;
+                }
+            });
+
+            $("#AddItem").on("hidden.bs.modal", function () {
+                $("#ItemName").val('');
+                $("#UnitPrice").val('');
+                $("#Quantity").val('');
+            });
+
+            $("#EditItem").on("hidden.bs.modal", function () {
+                $("#EditingID").val('');
+                $("#EditItemName").val('');
+                $("#EditUnitPrice").val('');
+                $("#EditQuantity").val('');
+            });
+
+            $("#Add").click(function () {
+                if ($("#ItemName").val() == "") {
+                    toastr.warning("Please select item");
+                    return;
+                }
+                if ($("#Quantity").val() == "" || $("#Quantity").val() == 0) {
+                    toastr.warning("Please enter quantity");
+                    return;
+                }
+
+                $("#tblItems tbody").append("<tr><td>" + $("#ItemName option:selected").text() + "</td><td style='text-align: center'>" + $("#Quantity").val() + "</td><td style='display: none'>" + $("#UnitPrice").val() + "</td><td style='text-align: right'>" + accounting.formatMoney($("#Quantity").val() * $("#UnitPrice").val(), "", 2, ",", ".") + "</td><td style='text-align: center'><button class='btn btn-success' title='Edit' onclick=\"return editItem('" + $("#ItemName").val() + "','" + $("#UnitPrice").val() + "','" + $("#Quantity").val() + "');\"><i class='fa fa-edit'></i></button></td><td style='display: none'>" + $("#ItemName").val() + "</td><td style='display: none'>0</td></tr>");
+                $("#AddItem").modal('hide');
+                ComputeTotal();
+                rePopulateItemNameDDL();
+            });
+
+            $("#ItemName").change(function () {
+                if ($(this).val() == "") {
+                    $("#UnitPrice").val('');
+                }
+                else {
+                    justLoad();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetUnitPrice")',
+                        data: { ID: $(this).val() },
+                        dataType: 'JSON',
+                        success: function (data) {
+                            $("#UnitPrice").val(data);
+                            unLoad();
+                        }
+                    })
+                }
+            });
+
+            $("#EditItemName").change(function () {
+                if ($(this).val() == "") {
+                    $("#EditItemName").val('');
+                }
+                else {
+                    justLoad();
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("GetUnitPrice")',
+                        data: { ID: $(this).val() },
+                        dataType: 'JSON',
+                        success: function (data) {
+                            $("#EditUnitPrice").val(data);
+                            unLoad();
+                        }
+                    })
+                }
+            });
+
+            $("#Update").click(function () {
+                if ($("#EditItemName").val() == "") {
+                    toastr.warning("Please select item");
+                    return;
+                }
+
+                if ($("#EditQuantity").val() == "" || $("#EditQuantity").val() == 0) {
+                    toastr.warning("Please enter quantity");
+                    return;
+                }
+
+                $.each($("#tblItems tbody tr"), function (indx, value) {
+                    var $tds = $(this).find('td');
+                    if ($("#EditingID").val() == $tds.eq(5).text()) {
+                        $tds.eq(0).text($("#EditItemName option:selected").text());
+                        $tds.eq(1).text($("#EditQuantity").val());
+                        $tds.eq(2).text($("#EditUnitPrice").val());
+                        $tds.eq(3).text(accounting.formatMoney($("#EditQuantity").val() * accounting.formatMoney($("#EditUnitPrice").val(), "", 2, "", "."), "", 2, ",", "."));
+                        $tds.eq(4).empty();
+                        $tds.eq(4).append("<button class='btn btn-success' title='Edit' onclick=\"return editItem('" + $("#EditItemName").val() + "','" + $("#EditUnitPrice").val() + "','" + $("#EditQuantity").val() + "');\"><i class='fa fa-edit'></i></button>");
+                        $tds.eq(5).text($("#EditItemName").val());
+                    }
+                });
+
+                $("#EditItem").modal('hide');
+
+                ComputeTotal();
+            });
+
+            $("#Save").click(function () {
+                if ($("#Customer").val() == "") {
+                    toastr.warning("Please enter customer");
+                    return;
+                }
+
+                if ($("#DeliveryDate").val() == "") {
+                    toastr.warning("Please select delivery date");
+                    return;
+                }
+                else {
+                    if (moment($("#DeliveryDate").val()).format("YYYY-MM-DD") < moment("@Model.DateOfDelivery").format("YYYY-MM-DD")) {
+                        toastr.warning("date should not be less than " + moment("@Model.DateOfDelivery").format("MM/DD/YYYY"));
+                        return;
+                    }
+                }
+
+                if ($("#Status").val() == "") {
+                    toastr.warning("Please select status");
+                    return;
+                }
+
+                if ($("#tblItems tbody tr").length == 0) {
+                    toastr.warning("Please enter at least 1 item");
+                    return;
+                }
+
+                var hasChanges = false;
+                var changes = new Array();
+                if ($("#Customer").val().toUpperCase() != $("#Customer").attr("title").toUpperCase()) {
+                    hasChanges = true;
+                    changes.push({ Details: 'Customer="' + $("#Customer").val() + '"' });
+                }
+
+                if (moment($("#DeliveryDate").val()).format("YYYY-MM-DD") != moment($("#DeliveryDate").attr("title")).format("YYYY-MM-DD")) {
+                    hasChanges = true;
+                    changes.push({ Details: 'Date of Deliver="' + moment($("#DeliveryDate").val()).format("MM/DD/YYYY") + '"' });
+                }
+
+                if ($("#Status").val().toUpperCase() != $("#Status").attr("title").toUpperCase()) {
+                    hasChanges = true;
+                    changes.push({ Details: 'Status="' + $("#Status").val() + '"' });
+                }
+
+                $.each($("#tblItems tbody tr"), function (indx, value) {
+                    var changesText = "";
+                    var $tds = $(this).find('td');
+                    if ($tds.eq(6).text() != 0) {
+                        if ($tds.eq(5).text() != $tds.eq(5).attr("title")) {
+                            hasChanges = true;
+                            changesText = 'Update purchase item. Purchase Item ID: ' + $tds.eq(6).text() + '.  SKU ID="' + $tds.eq(5).text() + '"';
+                        }
+
+                        if ($tds.eq(1).text() != $tds.eq(1).attr("title")) {
+                            hasChanges = true;
+                            changesText += (changesText != "" ? ', ' : 'Update purchase item. Purchase Item ID: ' + $tds.eq(6).text() + '. ') + 'Quantity="' + $tds.eq(1).text() + '"';
+                        }
+                        if (changesText != "") {
+                            changes.push({ Details: changesText });
+                        }
+                    }
+                    else {
+                        hasChanges = true;
+                        changes.push({ Details: 'Add new purchase item: SKU ID="' + $tds.eq(5).text() + '", ' + 'Quantity="' + $tds.eq(1).text() + '"' });
+                    }
+                });
+
+                if (!hasChanges) {
+                    toastr.warning("No changes to update");
+                    return;
+                }
+
+                swal({
+                    title: "<h3>Are you sure</h3>",
+                    text: "Do you want to save order?",
+                    type: 'question',
+                    width: '35rem',
+                    position: 'top',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirm',
+                    confirmButtonClass: 'btn btn-primary',
+                    cancelButtonClass: 'btn btn-danger',
+                    buttonsStyling: false,
+                    padding: 0,
+                    imageWidth: 60,
+                    imageHeight: 60
+                }).then((result) => {
+                    if (result.value) {
+                        var token = $("[name=__RequestVerificationToken]").val();
+
+                        justLoad();
+
+                        var item = new Array();
+
+                        $.each($("#tblItems tbody tr"), function (indx, value) {
+                            var $tds = $(this).find('td');
+                            item.push({
+                                ID: $tds.eq(6).text(),
+                                SKUID: $tds.eq(5).text(),
+                                Quantity: $tds.eq(1).text(),
+                                UnitPrice: $tds.eq(2).text()
+                            });
+                        });
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("UpdateOrder")',
+                            data: {
+                                __RequestVerificationToken: token,
+                                ID: '@Model.ID',
+                                FullName: $("#Customer").val(),
+                                DateOfDeliver: $("#DeliveryDate").val(),
+                                Status: $("#Status").val(),
+                                purchaseItem: item,
+                                amountDue: accounting.formatMoney($("#lblTotal").text(), "", 2, "", "."),
+                                auditChanges: changes
+                            },
+                            dataType: 'JSON',
+                            success: function (data) {
+                                if (data == "Success") {
+                                    window.location = '@Url.Action("Index")';
+                                }
+                                else {
+                                    toastr.warning(data);
+                                    unLoad();
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                var errorMessage = xhr.status + ': ' + xhr.statusText
+                                toastr.error('Error - ' + errorMessage);
+                                unLoad();
+                            }
+                        });
+                    }
+                    else {
+                        return false;
+                    }
+                });
+            });
+        });
+
+        function populateSuggestion() {
+            $("#suggestion").css("display", "block");
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("SearchCustomer")',
+                data: {
+                    Keyword: $("#Customer").val()
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#suggestion").empty();
+                    $.each(data, function (i, data) {
+                        if (i == 0) {
+                            $("#suggestion").append('<a id="' + data.ID + '" class="SelectedIntellisense" href="#" onclick="return false;"><div class="col-md-12 opt optSelected">' + data.FullName + '</div></a>');
+                        }
+                        else {
+                            $("#suggestion").append('<a id="' + data.ID + '" class="SelectedIntellisense" href="#" onclick="return false;"><div class="col-md-12 opt">' + data.FullName + '</div></a>');
+                        }
+                    });
+
+                    $(".SelectedIntellisense").click(function () {
+                        $("#Customer").val($(this).text());
+                        $("#suggestion").empty();
+                    });
+                }
+            })
+        }
+
+        function editItem(ID, UnitPrice, Quantity) {
+            var arrID = new Array();
+            $.each($("#tblItems tbody tr"), function (indx, value) {
+                var $tds = $(this).find('td');
+                arrID.push(parseInt($tds.eq(5).text()));
+            });
+
+            $("#EditItemName").empty();
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetEditItemDDL")',
+                data: { IDs: arrID, editingID: ID },
+                dataType: 'JSON',
+                traditional: true,
+                success: function (data) {
+                    $.each(data, function (indx, value) {
+                        $("#EditItemName").append('<option value="' + value.Value + '">' + value.Text + '</option>');
+                    });
+
+                    $("#EditingID").val(ID);
+                    $("#EditItemName").val(ID);
+                    $("#EditUnitPrice").val(UnitPrice);
+                    $("#EditQuantity").val(Quantity);
+
+                    $("#EditItem").modal({ backdrop: 'static', keyboard: false }, 'show');
+                }
+            });
+
+            return false;
+        }
+
+        function rePopulateItemNameDDL() {
+            var arrID = new Array();
+            $.each($("#tblItems tbody tr"), function (indx, value) {
+                var $tds = $(this).find('td');
+                arrID.push(parseInt($tds.eq(5).text()));
+            });
+
+            $("#ItemName").empty();
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetEditItemDDL")',
+                data: { IDs: arrID, editingID: 0 },
+                dataType: 'JSON',
+                traditional: true,
+                success: function (data) {
+                    $.each(data, function (indx, value) {
+                        $("#ItemName").append('<option value="' + value.Value + '">' + value.Text + '</option>');
+                    });
+                }
+            });
+        }
+
+        function ComputeTotal() {
+            var Total = 0;
+            $.each($("#tblItems tbody tr"), function (indx, value) {
+                var $tds = $(this).find('td');
+                Total += parseFloat(accounting.formatMoney($tds.eq(3).text(), "", 2, "", "."));
+            });
+            $("#lblTotal").text(accounting.formatMoney(Total, "", 2, ",", "."));
+        }
+    </script>
+}

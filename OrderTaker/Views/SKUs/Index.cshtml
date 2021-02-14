@@ -1,0 +1,564 @@
+﻿@{
+    ViewBag.Title = "SKU";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">@ViewBag.Title</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#AddSKUs" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i> Create New</button>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table id="tblSKUs" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th style="text-align: center">Code</th>
+                                            <th style="text-align: right">Unit Price</th>
+                                            <th style="text-align: center">Is Active</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            }
+        </div>
+    </div>
+</div>
+<img class="imgZoom" src="" />
+
+<div class="modal fade" id="AddSKUs">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create New SKU</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-12 col-ms-12 col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <input type="hidden" id="EditCurrImage" />
+                                                <img id="imgAddSKUs" src="/SKUs Images/noIMG.png" class="imgAddSKUs" />
+                                            </div>
+                                            <div class="col-md-12">
+                                                <input type="file" id="prodImg" accept="image/x-png,image/gif,image/jpeg,image/jpg,image/bmp">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Name" class="col-md-12 control-label required">Name</label>
+                                            <div class="col-md-12">
+                                                <input type="text" id="Name" class="form-control" maxlength="60" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="Code" class="col-md-12 control-label required">Code</label>
+                                            <div class="col-md-12">
+                                                <input type="text" id="Code" class="form-control" maxlength="30" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="UnitPrice" class="col-md-12 control-label required">Unit Price</label>
+                                            <div class="col-md-12">
+                                                <input type="text" id="UnitPrice" class="form-control numeric" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <label for="IsActive" class="control-label"><input id="IsActive" type="checkbox" checked /> Active</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="Save" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+                <button id="Cancel" class="btn btn-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i> Cancel</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="EditSKUs">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit SKU</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-12 col-ms-12 col-md-12 col-lg-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <img id="EditimgAddSKUs" src="/SKUs Images/noIMG.png" class="imgAddSKUs" />
+                                            </div>
+                                            <div class="col-md-12">
+                                                <input type="file" id="EditprodImg" accept="image/x-png,image/gif,image/jpeg,image/jpg,image/bmp">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="EditName" class="col-md-12 control-label required">Name</label>
+                                            <div class="col-md-12">
+                                                <input type="hidden" id="EditID" />
+                                                <input type="text" id="EditName" class="form-control" maxlength="60" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="EditCode" class="col-md-12 control-label required">Code</label>
+                                            <div class="col-md-12">
+                                                <input type="text" id="EditCode" class="form-control" maxlength="30" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="EditUnitPrice" class="col-md-12 control-label required">Unit Price</label>
+                                            <div class="col-md-12">
+                                                <input type="text" id="EditUnitPrice" class="form-control numeric" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <label for="EditIsActive" class="control-label"><input id="EditIsActive" type="checkbox" checked /> Active</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="Update" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+                <button id="Cancel" class="btn btn-danger" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i> Cancel</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            GetSKUsLIst();
+
+            $("#AddSKUs").on("hidden.bs.modal", function () {
+                $("#imgAddSKUs").attr("src", "/SKUs Images/noIMG.png");
+                $("#prodImg").val('');
+                $("#Name").val('');
+                $("#Code").val('');
+                $("#UnitPrice").val('');
+                $("#IsActive").prop('checked', true);
+            });
+
+            $("#EditSKUs").on("hidden.bs.modal", function () {
+                $("#EditCurrImage").val('');
+                $("#EditimgAddSKUs").attr("src", "/SKUs Images/noIMG.png");
+                $("#EditprodImg").val('');
+                $("#EditID").val('');
+                $("#EditName").val('');
+                $("#EditCode").val('');
+                $("#EditUnitPrice").val('');
+                $("#EditIsActive").prop('checked', false);
+            });
+
+            $("#Save").click(function () {
+                if ($("#Name").val() == "") {
+                    toastr.warning("Please enter name");
+                    return;
+                }
+
+                if ($("#Code").val() == "") {
+                    toastr.warning("Please enter code");
+                    return;
+                }
+
+                if ($("#UnitPrice").val() == "" || $("#UnitPrice").val() == 0) {
+                    toastr.warning("Please enter unit price");
+                    return;
+                }
+
+
+                swal({
+                    title: "<h3>Are you sure</h3>",
+                    text: "Do you want to save SKU?",
+                    type: 'question',
+                    width: '35rem',
+                    position: 'top',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirm',
+                    confirmButtonClass: 'btn btn-primary',
+                    cancelButtonClass: 'btn btn-danger',
+                    buttonsStyling: false,
+                    padding: 0,
+                    imageWidth: 60,
+                    imageHeight: 60
+                }).then((result) => {
+                    if (result.value) {
+                        justLoad();
+                        var token = $("[name=__RequestVerificationToken]").val();
+
+                        var formData = new FormData();
+                        var SKUsImage = document.getElementById("prodImg").files[0];
+
+                        formData.append("__RequestVerificationToken", token);
+                        formData.append("files", SKUsImage);
+                        formData.append("Name", $("#Name").val());
+                        formData.append("Code", $("#Code").val());
+                        formData.append("UnitPrice", accounting.formatMoney($("#UnitPrice").val(), "", 2, "", "."));
+                        formData.append("IsActive", $("#IsActive").prop('checked'));
+                        formData.append("auditChanges[]", 'Name="' + $("#Name").val() + '"');
+                        formData.append("auditChanges[]", 'Code="' + $("#Code").val() + '"');
+                        formData.append("auditChanges[]", 'Unit Price="' + accounting.formatMoney($("#UnitPrice").val(), "", 2, "", ".") + '"');
+                        formData.append("auditChanges[]", 'Is Active="' + $("#IsActive").prop('checked').toString() + '"');
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("InsertSKUs")',
+                            data: formData,
+                            dataType: 'JSON',
+                            processData: false,
+                            contentType: false,
+                            success: function (data) {
+                                if (data == "Success") {
+                                    toastr.success("Saved Successfull");
+                                    GetSKUsLIst();
+                                    $("#AddSKUs").modal('hide');
+                                }
+                                else if (data == "Name already exist") {
+                                    toastr.warning("Name already exist");
+                                }
+                                else if (data == "Code already exist") {
+                                    toastr.warning("Code already exist");
+                                }
+                                else {
+                                    toastr.warning(data);
+                                }
+                                unLoad();
+                            },
+                            error: function (xhr, status, error) {
+                                var errorMessage = xhr.status + ': ' + xhr.statusText
+                                toastr.error('Error - ' + errorMessage);
+                                unLoad();
+                            }
+                        });
+                    }
+                    else {
+                        return false;
+                    }
+                });
+            });
+
+            $('#prodImg').bind('change', function () {
+                try {
+                    var file = ($('#prodImg'))[0].files[0];
+                    var filetype = file["type"];
+
+                    var x = this.files[0].size / 1024 / 1024;
+                    var filetypes = ["image/png", "image/gif", "image/jpeg", "image/jpg", "image/bmp"];
+
+                    if (x > 2) {
+                        toastr.warning("Can't upload more than 2 MB of image. Please select another one.");
+                        $("#prodImg").val('');
+                        var output = document.getElementById('imgAddSKUs');
+                        output.src = "/SKUs Images/noIMG.png";
+                        return false;
+                    }
+                    else if ($.inArray(filetype, filetypes) < 0) {
+                        toastr.warning("Picture shall be in PNG, GIF, JPEG or BMP file format.");
+                        $("#prodImg").val('');
+                        var output = document.getElementById('imgAddSKUs');
+                        output.src = "/SKUs Images/noIMG.png";
+                        return false;
+                    }
+                    else {
+                        var output = document.getElementById('imgAddSKUs');
+                        output.src = URL.createObjectURL(event.target.files[0]);
+                    }
+                }
+                catch (err) {
+                    $("#prodImg").val('');
+                    var output = document.getElementById('imgAddSKUs');
+                    output.src = "/SKUs Images/noIMG.png";
+                }
+
+            });
+
+            $('#EditprodImg').bind('change', function () {
+                try {
+                    var file = ($('#EditprodImg'))[0].files[0];
+                    var filetype = file["type"];
+
+                    var x = this.files[0].size / 1024 / 1024;
+                    var filetypes = ["image/png", "image/gif", "image/jpeg", "image/jpg", "image/bmp"];
+
+                    if (x > 2) {
+                        toastr.warning("Can't upload more than 2 MB of image. Please select another one.");
+                        $("#EditprodImg").val('');
+                        var output = document.getElementById('imgAddSKUs');
+                        output.src = $("#EditCurrImage").val();
+                        return false;
+                    }
+                    else if ($.inArray(filetype, filetypes) < 0) {
+                        toastr.warning("Picture shall be in PNG, GIF, JPEG or BMP file format.");
+                        $("#EditprodImg").val('');
+                        var output = document.getElementById('imgAddSKUs');
+                        output.src = $("#EditCurrImage").val();
+                        return false;
+                    }
+                    else {
+                        var output = document.getElementById('EditimgAddSKUs');
+                        output.src = URL.createObjectURL(event.target.files[0]);
+                    }
+                }
+                catch (err) {
+                    $("#EditprodImg").val('');
+                    var output = document.getElementById('EditimgAddSKUs');
+                    output.src = $("#EditCurrImage").val();
+                }
+
+            });
+
+            $("#Update").click(function () {
+                if ($("#EditName").val() == "") {
+                    toastr.warning("Please enter name");
+                    return;
+                }
+
+                if ($("#EditCode").val() == "") {
+                    toastr.warning("Please enter code");
+                    return;
+                }
+
+                if ($("#EditUnitPrice").val() == "" || $("#EditUnitPrice").val() == 0) {
+                    toastr.warning("Please enter unit price");
+                    return;
+                }
+
+                var hasChanges = false;
+                var changes = new Array();
+                if ($("#EditName").val().toUpperCase() != $("#EditName").attr("title").toUpperCase()) {
+                    hasChanges = true;
+                    changes.push('Name="' + $("#EditName").val() + '"');
+                }
+
+                if ($("#EditCode").val().toUpperCase() != $("#EditCode").attr("title").toUpperCase()) {
+                    hasChanges = true;
+                    changes.push('Code="' + $("#EditCode").val() + '"');
+                }
+
+                if (parseFloat(accounting.formatMoney($("#EditUnitPrice").val(), "", 2, "", ".")) != parseFloat($("#EditUnitPrice").attr("title"))) {
+                    hasChanges = true;
+                    changes.push('Unit Price="' + accounting.formatMoney($("#EditUnitPrice").val(), "", 2, "", ".") + '"');
+                }
+
+                if ($("#EditIsActive").prop('checked').toString().toUpperCase() != $("#EditIsActive").attr("title").toUpperCase()) {
+                    hasChanges = true;
+                    changes.push('Is Active="' + $("#EditIsActive").prop('checked').toString() + '"');
+                }
+
+                if ($("#EditprodImg").val() != "") {
+                    hasChanges = true;
+                    changes.push('Image Path="/SKUs Images/' + document.getElementById("EditprodImg").files[0].name + '"');
+                }
+
+                if (!hasChanges) {
+                    toastr.warning("No changes to update");
+                    return;
+                }
+
+
+                swal({
+                    title: "<h3>Are you sure</h3>",
+                    text: "Do you want to update SKU?",
+                    type: 'question',
+                    width: '35rem',
+                    position: 'top',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirm',
+                    confirmButtonClass: 'btn btn-primary',
+                    cancelButtonClass: 'btn btn-danger',
+                    buttonsStyling: false,
+                    padding: 0,
+                    imageWidth: 60,
+                    imageHeight: 60
+                }).then((result) => {
+                    if (result.value) {
+                        justLoad();
+                        var token = $("[name=__RequestVerificationToken]").val();
+
+                        var formData = new FormData();
+                        var SKUsImage = document.getElementById("EditprodImg").files[0];
+
+                        formData.append("__RequestVerificationToken", token);
+                        formData.append("files", SKUsImage);
+                        formData.append("ID", $("#EditID").val());
+                        formData.append("Name", $("#EditName").val());
+                        formData.append("Code", $("#EditCode").val());
+                        formData.append("UnitPrice", accounting.formatMoney($("#EditUnitPrice").val(), "", 2, "", "."));
+                        formData.append("IsActive", $("#EditIsActive").prop('checked'));
+
+                        $.each(changes, function (indx, value) {
+                            formData.append("auditChanges[]", value);
+                        });
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("UpdateSKUs")',
+                            data: formData,
+                            dataType: 'JSON',
+                            processData: false,
+                            contentType: false,
+                            success: function (data) {
+                                if (data == "Success") {
+                                    toastr.success("Saved Successfull");
+                                    GetSKUsLIst();
+                                    $("#EditSKUs").modal('hide');
+                                }
+                                else if (data == "Name already exist") {
+                                    toastr.warning("Name already exist");
+                                }
+                                else if (data == "Code already exist") {
+                                    toastr.warning("Code already exist");
+                                }
+                                else {
+                                    toastr.warning(data);
+                                }
+                                unLoad();
+                            },
+                            error: function (xhr, status, error) {
+                                var errorMessage = xhr.status + ': ' + xhr.statusText
+                                toastr.error('Error - ' + errorMessage);
+                                unLoad();
+                            }
+                        });
+                    }
+                    else {
+                        return false;
+                    }
+                });
+            });
+        });
+
+        function GetSKUsLIst() {
+            $("#tblSKUs tbody").empty();
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetSKUsLIst")',
+                dataType: 'JSON',
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $("#tblSKUs tbody").append("<tr><td><img src='" + (value.ImagePath != "" ? value.ImagePath : "/SKUs Images/noIMG.png") + "' class='" + (value.ImagePath != "" ? "imgSKU" : "noIMG") + "'/></td><td>" +
+                            value.Name + "</td><td style='text-align:center;'>" +
+                            value.Code + "</td><td style='text-align:right;'>" +
+                            accounting.formatMoney(value.UnitPrice, "", 2, ",", ".") + "</td><td style='text-align:center;'>" +
+                            (value.IsActive == true ? "<span class='label label-success'>" : "<span class='label label-danger'>") + value.IsActive + "</span>" + "</td><td style='text-align:center;'>" +
+                            "<button class='btn btn-success' title='Edit' onclick=\"return editSKUs('" + value.ID + "','" + value.ImagePath + "','" + value.Name + "','" + value.Code +"','" + value.UnitPrice + "'," + value.IsActive + ");\"><i class='fa fa-edit'></i></button></td></tr>");
+                    });
+
+
+
+                    $('.imgSKU').hover(function (e) {
+                        var relativeX = e.pageX;
+                        var relativeY = e.pageY - 200;
+
+                        $(".imgZoom").css("top", relativeY);
+                        $(".imgZoom").css("left", relativeX);
+                        $(".imgZoom").attr("src", $(this).attr("src"));
+                        $(".imgZoom").show();
+                    }, function () {
+                        $(".imgZoom").hide();
+                    })
+                }
+            });
+        }
+
+        function editSKUs(ID, ImagePath, Name, Code, UnitPrice, IsActive) {
+            $("#EditID").val(ID);
+            $("#EditCurrImage").val((ImagePath != "" ? ImagePath : "/SKUs Images/noIMG.png"))
+            $("#EditimgAddSKUs").attr("src", (ImagePath != "" ? ImagePath : "/SKUs Images/noIMG.png"));
+            $("#EditimgAddSKUs").attr("title", (ImagePath != "" ? ImagePath : "/SKUs Images/noIMG.png"));
+            $("#EditName").val(Name);
+            $("#EditName").attr("title", Name);
+            $("#EditCode").val(Code);
+            $("#EditCode").attr("title", Code);
+            $("#EditUnitPrice").val(UnitPrice);
+            $("#EditUnitPrice").attr("title", UnitPrice);
+            $("#EditUnitPrice").blur();
+            $("#EditIsActive").prop('checked', IsActive);
+            $("#EditIsActive").attr('title', IsActive.toString());
+
+            $("#EditSKUs").modal({ backdrop: 'static', keyboard: false }, 'show');
+
+            return false;
+        }
+    </script>
+}

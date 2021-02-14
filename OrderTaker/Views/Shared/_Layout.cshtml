@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/js/all.min.js" integrity="sha512-UwcC/iaz5ziHX7V6LjSKaXgCuRRqbTp1QHpbOJ4l1nw2/boCfZ2KlFIqBUA/uRVF0onbREnY9do8rM/uT/ilqw==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link href="~/Content/sweetalert2-7.28.4/dist/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/Content/sweetalert2-7.28.4/dist/animate.css" rel="stylesheet" />
+    <link href="~/Content/helper.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+        @*@Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")*@
+
+    </head>
+    <body>
+        <div class="divLoading" style="display:none"><div class="Panel-Loading-BG"></div><div id="Panel-Loading"><div></div></div></div>
+    <div class="wrapper">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Order Taker</h3>
+            </div>
+            <ul class="lisst-unstyled components">
+                @*<li class="active">
+                    <a href="#" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Home</a>
+                    <ul class="collapse lisst-unstyled" id="homeSubMenu">
+                        <li>
+                            @Html.ActionLink("Customer", "Index", "Home")
+                        </li>
+                    </ul>
+                </li>*@
+                <li>
+                    @Html.ActionLink("Customer", "Index", "Home")
+                </li>
+                <li>
+                    @Html.ActionLink("SKU", "Index", "SKUs")
+                </li>
+                <li>
+                    @Html.ActionLink("Orders", "Index", "Order")
+                </li>
+                <li>
+                    @Html.ActionLink("Audit Logs", "Index", "Audit")
+                </li>
+            </ul>
+        </nav>
+
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+            <div class="container-fluid content-body">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="/Scripts/jquery-1.10.2.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous"></script>
+    <script src="/Content/sweetalert2-7.28.4/dist/sweetalert2.min.js"></script>
+    <script src="/Scripts/helper.js"></script>
+    <script src="~/Scripts/accounting.min.js"></script>
+    <script src="~/Content/moment/moment.js"></script>
+
+    @*@Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")*@
+        @RenderSection("scripts", required: false)
+
+        <script>
+            $(document).ready(function () {
+                $("#sidebarCollapse").click(function () {
+                    $("#sidebar").toggleClass("active");
+                });
+
+                $(".numeric").blur(function () {
+                    var val = accounting.formatMoney($(this).val(), "", 2, ",", ".");
+                    $(this).val(val);
+                });
+
+                $(".numeric").focus(function () {
+                    this.select();
+                });
+
+                $(".integer").focus(function () {
+                    this.select();
+                });
+
+                $(".isInteger").keypress(function (evt) {
+                    evt = (evt) ? evt : window.event;
+                    var charCode = (evt.which) ? evt.which : evt.keyCode;
+                    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                        return false;
+                    }
+                    return true;
+                });
+
+                $(".numeric").keypress(function (eve) {
+                    if ((eve.which != 46 || $(this).val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57)) {
+                        if (eve.which == 45) {
+                            if ($(this).val().indexOf('-') >= 0) {
+                                eve.preventDefault();
+                            }
+                            else {
+                                if ($(this).val().length > 0) {
+                                    eve.preventDefault();
+                                }
+                            }
+                        }
+                        else {
+                            eve.preventDefault();
+                        }
+                    }
+                });
+
+                $(".integer").keypress(function (eve) {
+                    if ((eve.which != 46 || $(this).val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57)) {
+                        if (eve.which == 45) {
+                            if ($(this).val().indexOf('-') >= 0) {
+                                eve.preventDefault();
+                            }
+                            else {
+                                if ($(this).val().length > 0) {
+                                    eve.preventDefault();
+                                }
+                            }
+                        }
+                        else {
+                            eve.preventDefault();
+                        }
+                    }
+                });
+
+                $(".mobile").keypress(function (eve) {
+                    if ((eve.which < 48 || eve.which > 57)) {
+                        eve.preventDefault();
+                    }
+                });
+            });
+        </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\ViewModel\bin\Debug\ViewModel.dll
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\ViewModel\bin\Debug\ViewModel.pdb
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\ViewModel\obj\Debug\ViewModel.csprojResolveAssemblyReference.cache
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\ViewModel\obj\Debug\ViewModel.dll
+C:\Users\Adriane\Documents\Visual Studio 2015\Projects\OrderTaker\ViewModel\obj\Debug\ViewModel.pdb

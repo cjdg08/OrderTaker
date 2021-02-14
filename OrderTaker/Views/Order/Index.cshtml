@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "Orders";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">@ViewBag.Title</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href='@Url.Action("CreateOrder")' class="btn btn-primary pull-right" >Create New</a>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table id="tblOrders" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <th style="text-align: center">Delivery Date</th>
+                                            <th>Status</th>
+                                            <th style="text-align: right">Amount Due</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            GetOrderList();
+        });
+
+        function GetOrderList() {
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetOrderList")',
+                dataType: 'JSON',
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        var badge = "";
+                        if (value.Status == "New") {
+                            badge = "label label-warning";
+                        }
+                        else if (value.Status == "Completed") {
+                            badge = "label label-success";
+                        }
+                        else if (value.Status == "Cancelled") {
+                            badge = "label label-danger";
+                        }
+
+                        $("#tblOrders tbody").append("<tr><td>" + value.CustomerName + "</td><td style='text-align:center;'>" +
+                            moment(value.DateOfDelivery).format("MM/DD/YYYY") + "</td><td>" +
+                            "<span class='" + badge + "'>" + value.Status + "</span>" + "</td><td style='text-align:right;'>" +
+                            accounting.formatMoney(value.AmountDue, "", 2, ",", ".") + "</td><td style='text-align:center;'>" +
+                            "<a href='/Order/EditOrder/"+ value.ID +"' class='btn btn-success' title='Edit' ><i class='fa fa-edit'></i></a></td></tr>");
+                    });
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = xhr.status + ': ' + xhr.statusText
+                    toastr.error('Error - ' + errorMessage);
+                }
+            });
+        }
+    </script>
+}
